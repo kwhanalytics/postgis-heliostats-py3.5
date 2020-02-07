@@ -35,7 +35,10 @@ RUN apt-get install -y libpq-dev build-essential python3.5 python3.5-dev python3
 RUN python3.5 -m pip install pip --upgrade
 RUN python3.5 -m pip install wheel
 
-# `python` should point to python3.5
+# `python` is /usr/bin/python, a symlink. Delete old symlink, make new one.
+# New one will point to python3.5 so that's the version we'll get when running
+# `python`.
+RUN rm /usr/bin/python
 RUN ln -s /usr/bin/python3.5  /usr/bin/python
 
 # Run any additional tasks here that are too tedious to put in
