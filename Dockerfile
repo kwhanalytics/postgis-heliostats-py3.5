@@ -35,11 +35,7 @@ RUN apt-get install -y libpq-dev build-essential python3.5 python3.5-dev python3
 RUN python3.5 -m pip install pip --upgrade
 RUN python3.5 -m pip install wheel
 
-# `python` is /usr/bin/python, a symlink. Delete old symlink, make new one.
-# New one will point to python3.5 so that's the version we'll get when running
-# `python`.
-RUN rm -f /usr/bin/python
-RUN ln -s /usr/bin/python3.5  /usr/bin/python
+RUN python --version
 
 # Run any additional tasks here that are too tedious to put in
 # this dockerfile directly.
@@ -47,6 +43,8 @@ ADD env-data.sh /env-data.sh
 ADD setup.sh /setup.sh
 RUN chmod +x /setup.sh
 RUN /setup.sh
+
+RUN python --version
 
 # We will run any commands in this when the container starts
 ADD docker-entrypoint.sh /docker-entrypoint.sh
@@ -58,12 +56,25 @@ ADD setup-ssl.sh /
 ADD setup-user.sh /
 RUN chmod +x /docker-entrypoint.sh
 
+RUN python --version
+
 # Heliostats specific commands
 # copied from https://github.com/kwha-docker/postgis-marvin/blob/master/Dockerfile
 RUN apt-get install -y libssl-dev libffi-dev \
     python-tk libncurses5-dev bash s3cmd jq git lftp curl virtualenv
 
+RUN python --version
+
 ADD . /postgis-public
+
+RUN python --version
+
+# `python` is /usr/bin/python, a symlink. Delete old symlink, make new one.
+# New one will point to python3.5 so that's the version we'll get when running
+# `python`.
+RUN ln -f /usr/bin/python3.5  /usr/bin/python
+
+RUN python --version
 
 RUN pip install -r /postgis-public/requirements-marvin.txt
 RUN pip install -r /postgis-public/requirements-heliostats.txt
